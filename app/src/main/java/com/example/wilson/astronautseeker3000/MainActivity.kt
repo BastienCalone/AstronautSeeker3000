@@ -1,10 +1,12 @@
 package com.example.wilson.astronautseeker3000
 
 import android.databinding.DataBindingUtil
+import android.databinding.Observable
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.adefruandta.spinningwheel.SpinningWheelView
 import com.example.wilson.astronautseeker3000.databinding.ActivityMainBinding
+import com.example.wilson.astronautseeker3000.model.Interaction
 import com.example.wilson.astronautseeker3000.model.Planet
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -27,7 +29,15 @@ class MainActivity : AppCompatActivity() {
         bindingView.viewmodel = viewModel
 
         astronaut_spinning_wheel.items = planets.map { it.name }
-        astronaut_spinning_wheel.isEnabled = true
+
+        viewModel.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+                when (propertyId) {
+                    BR.winnerName -> updateWinnerMessage(viewModel.winnerName)
+                    BR.shouldRotate -> turnTheWheel(viewModel.shouldRotate)
+                }
+            }
+        })
 
         astronaut_spinning_wheel.onRotationListener =
                 object : SpinningWheelView.OnRotationListener<String?> {
@@ -35,12 +45,24 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     override fun onStopRotation(item: String?) {
-                        item?.let { winner_text.text = getString(R.string.winner_text) + item }
+                        item?.let {
+                            viewModel.handleInteraction(Interaction.StopRotate(item))
+                        }
                     }
 
                 }
 
         turn_the_wheel_button.setOnClickListener {
+            viewModel.handleInteraction(Interaction.Rotate)
+        }
+    }
+
+    private fun updateWinnerMessage(winnerName: String) {
+        winner_text.text = getString(R.string.winner_text) + winnerName
+    }
+
+    private fun turnTheWheel(shouldRotate: Boolean) {
+        if (shouldRotate) {
             astronaut_spinning_wheel.rotate(50f, 7000, 50)
         }
     }
