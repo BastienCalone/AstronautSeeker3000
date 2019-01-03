@@ -4,6 +4,7 @@ import android.databinding.DataBindingUtil
 import android.databinding.Observable
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.widget.Toast
 import com.adefruandta.spinningwheel.SpinningWheelView
 import com.example.wilson.astronautseeker3000.databinding.ActivityMainBinding
 import com.example.wilson.astronautseeker3000.model.Interaction
@@ -13,9 +14,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     val planets = listOf(
-        Planet("Duck", 0),
-        Planet("Racoon", 0),
-        Planet("Panda", 0),
+        Planet("Duck"),
+        Planet("Racoon"),
+        Planet("Panda"),
         Planet("Schizo", 1)
     )
 
@@ -49,7 +50,6 @@ class MainActivity : AppCompatActivity() {
                             viewModel.handleInteraction(Interaction.StopRotate(item))
                         }
                     }
-
                 }
 
         turn_the_wheel_button.setOnClickListener {
@@ -59,6 +59,19 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateWinnerMessage(winnerName: String) {
         winner_text.text = getString(R.string.winner_text) + winnerName
+        updateWinnerRank(winnerName)
+    }
+
+    private fun updateWinnerRank(winner: String) {
+        val planet = planets.first { s -> s.name == winner }
+        planet.rank++
+
+        if (isBestPlanet(planet)) {
+            Toast.makeText(this, "LES SCHIZOS C TELEMEN D MONSTRES", Toast.LENGTH_LONG).show()
+        }
+
+        val zero = planets.filter { s -> s.rank < 0 }
+
     }
 
     private fun turnTheWheel(shouldRotate: Boolean) {
@@ -66,4 +79,6 @@ class MainActivity : AppCompatActivity() {
             astronaut_spinning_wheel.rotate(50f, 7000, 50)
         }
     }
+
+    fun isBestPlanet(planet: Planet) = if (planet.name == "Schizo") true else false
 }
