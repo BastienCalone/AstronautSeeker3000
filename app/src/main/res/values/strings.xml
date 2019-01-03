@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">AstronautSeeker3000</string>
+    <string name="spin_the_fucking_wheel">Spin the fucking wheel</string>
+    <string name="winner_text">Et le gagnant est :</string>
+</resources>
