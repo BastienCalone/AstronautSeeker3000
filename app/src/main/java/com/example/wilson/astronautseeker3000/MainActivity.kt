@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    val planets = listOf(
+    var planets = listOf(
         Planet("Duck"),
         Planet("Racoon"),
         Planet("Panda"),
@@ -55,6 +55,9 @@ class MainActivity : AppCompatActivity() {
         turn_the_wheel_button.setOnClickListener {
             viewModel.handleInteraction(Interaction.Rotate)
         }
+        result.setOnClickListener {
+            displayRank()
+        }
     }
 
     private fun updateWinnerMessage(winnerName: String) {
@@ -81,4 +84,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun isBestPlanet(planet: Planet) = if (planet.name == "Schizo") true else false
+
+    private fun displayRank() {
+        planets = planets.sortedBy { it.rank }
+        planets = planets.reversed()
+        Toast.makeText(this, "classement : $planets", Toast.LENGTH_LONG).show()
+    }
 }
