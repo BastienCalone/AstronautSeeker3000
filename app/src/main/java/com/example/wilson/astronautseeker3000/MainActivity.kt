@@ -1,8 +1,10 @@
 package com.example.wilson.astronautseeker3000
 
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.adefruandta.spinningwheel.SpinningWheelView
+import com.example.wilson.astronautseeker3000.databinding.ActivityMainBinding
 import com.example.wilson.astronautseeker3000.model.Planet
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -15,10 +17,14 @@ class MainActivity : AppCompatActivity() {
         Planet("Schizo", 1)
     )
 
+    val viewModel = MainViewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_main)
+        val bindingView: ActivityMainBinding =
+            DataBindingUtil.setContentView(this, R.layout.activity_main)
+        bindingView.viewmodel = viewModel
 
         astronaut_spinning_wheel.items = planets.map { it.name }
         astronaut_spinning_wheel.isEnabled = true
@@ -34,6 +40,8 @@ class MainActivity : AppCompatActivity() {
 
                 }
 
-        turn_the_wheel_button.setOnClickListener { astronaut_spinning_wheel.rotate(50f, 7000, 50) }
+        turn_the_wheel_button.setOnClickListener {
+            astronaut_spinning_wheel.rotate(50f, 7000, 50)
+        }
     }
 }
